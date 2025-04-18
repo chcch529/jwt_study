@@ -17,7 +17,8 @@ public class JwtConfiguration {
     @Getter
     @RequiredArgsConstructor
     public static class Validation {
-        private final Long exp;
+        private final Long access;
+        private final Long refresh;
     }
 
     @Getter
