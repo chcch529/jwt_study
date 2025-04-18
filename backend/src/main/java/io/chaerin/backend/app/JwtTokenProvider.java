@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
@@ -21,7 +22,7 @@ public class JwtTokenProvider {
 //    private Long exp;
     public String issue() {
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 // payload에 들어날 내용
                 .subject("Goood moring")
                 // key value로 되어있는 body
@@ -31,11 +32,14 @@ public class JwtTokenProvider {
                 // 만료 시간 (일단 60초)
                 .expiration(new Date(new Date().getTime() + jwtConfiguration.getValidation().getExp()))
                 // 내가 만든거애옴. 서명 (암호화된 키, 어떻게 암호화 할건지)
-                .signWith(Keys.hmacShaKeyFor("A5A10BC17B4E653C78BDD55FFFD9DEE3BE5790CD6F3F64DC1E82E791F9821C17".getBytes())
-                        , Jwts.SIG.HS256)
+                .signWith(getSecretKey(), Jwts.SIG.HS256)
                 .compact();
+    }
 
-        return token;
+
+    // jwt 토큰 만들 때만 쓸거니까 private여도 상관 ㄴㄴ
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(jwtConfiguration.getSecrets().getAppKey().getBytes());
     }
 
 
