@@ -1,24 +1,44 @@
 package io.chaerin.backend.app;
 
-import io.chaerin.backend.config.JwtConfiguration;
+import io.chaerin.backend.dao.RefreshTokenRepository;
+import io.chaerin.backend.domain.Member;
+import io.chaerin.backend.domain.RefreshToken;
 import io.chaerin.backend.dto.Role;
+import io.chaerin.backend.config.JwtConfiguration;
 import io.chaerin.backend.dto.TokenBody;
+import io.chaerin.backend.dto.TokenPair;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.antlr.v4.runtime.Token;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
     private final JwtConfiguration jwtConfiguration;
+    private final RefreshTokenRepository refreshTokenRepository;
+    public TokenPair generateTokenPair(Member member) {
+
+        String accessToken = issueAccessToken(member.getId(), member.getRole());
+        String refreshToken = issueRefreshToken(member.getId(), member.getRole());
+
+        RefreshToken token = new RefreshToken(refreshToken, member);
+        refreshTokenRepository.save(token);
+
+        return TokenPair.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 
     // application.yml에서 가져욤
     // 스프링이 가져와서 넣어주는 거라, 스프링 추가해줘야 가넝

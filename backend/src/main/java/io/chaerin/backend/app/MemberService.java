@@ -1,7 +1,7 @@
 package io.chaerin.backend.app;
 
-import io.chaerin.backend.dao.MemberRepository;
 import io.chaerin.backend.domain.Member;
+import io.chaerin.backend.dao.MemberRepository;
 import io.chaerin.backend.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -40,7 +40,7 @@ public class MemberService extends DefaultOAuth2UserService {
         });
 
         if (findMember.getProvider().equals(provider)) {
-            return memberDetails.setRole(findMember.getRole());
+            return memberDetails.setId(findMember.getId()).setRole(findMember.getRole());
         } else {
             throw new IllegalStateException("다른 이메일로 가입되어 있습니다.");
         }

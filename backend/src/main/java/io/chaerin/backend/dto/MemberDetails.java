@@ -10,12 +10,15 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Getter
 @Accessors(chain = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberDetails implements OAuth2User {
+
+    @Setter
+    private Long id;
+
     private String name;
     private String email;
 

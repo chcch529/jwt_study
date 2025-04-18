@@ -1,7 +1,7 @@
 package io.chaerin.backend.app;
 
-import io.chaerin.backend.dto.MemberDetails;
 import io.chaerin.backend.exceptions.UnavailableProviderException;
+import io.chaerin.backend.dto.MemberDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;

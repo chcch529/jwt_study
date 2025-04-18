@@ -1,14 +1,17 @@
 package io.chaerin.backend.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -23,7 +26,11 @@ public class SecurityConfig {
                         // 우리 세션 정책은 stateless야~ 더 이상 기억 안할거야~~
                         SessionCreationPolicy.STATELESS
                 ))
-                .oauth2Login(Customizer.withDefaults())
+//                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth -> {
+                    // 인증 후 다 성공했을 때 어떤 작업을 수행할 지 정의
+                    oauth.successHandler(oAuth2SuccessHandler);
+                })
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers("/user/**")
