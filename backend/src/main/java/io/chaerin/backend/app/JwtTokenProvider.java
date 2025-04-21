@@ -1,6 +1,8 @@
 package io.chaerin.backend.app;
 
+import io.chaerin.backend.dao.RefreshTokenBlackListRepository;
 import io.chaerin.backend.dao.RefreshTokenRepository;
+import io.chaerin.backend.dao.TokenRepository;
 import io.chaerin.backend.domain.Member;
 import io.chaerin.backend.domain.RefreshToken;
 import io.chaerin.backend.dto.Role;
@@ -11,12 +13,12 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.antlr.v4.runtime.Token;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,14 +27,17 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final JwtConfiguration jwtConfiguration;
-    private final RefreshTokenRepository refreshTokenRepository;
+    //    private final RefreshTokenRepository refreshTokenRepository;
+    //    private final RefreshTokenBlackListRepository refreshTokenBlackListRepository;
+    private final TokenRepository tokenRepository;
+
     public TokenPair generateTokenPair(Member member) {
 
         String accessToken = issueAccessToken(member.getId(), member.getRole());
         String refreshToken = issueRefreshToken(member.getId(), member.getRole());
 
-        RefreshToken token = new RefreshToken(refreshToken, member);
-        refreshTokenRepository.save(token);
+//        RefreshToken token = new RefreshToken(refreshToken, member);
+        tokenRepository.save(member, refreshToken);
 
         return TokenPair.builder()
                 .accessToken(accessToken)
@@ -44,6 +49,14 @@ public class JwtTokenProvider {
     // 스프링이 가져와서 넣어주는 거라, 스프링 추가해줘야 가넝
 //    @Value("${custom.jwt.validation.exp}")
 //    private Long exp;
+
+
+    // find: ㄹㅇ 객체로 가져올 때
+    // get: optional로 가져올 때
+    public Optional<RefreshToken> findRefreshToken(Long memberId) {
+        return tokenRepository.findValidRefToken(memberId);
+
+    }
 
     public String issueAccessToken(Long id, Role role) {
         return issue(id, role, jwtConfiguration.getValidation().getAccess());
