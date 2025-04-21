@@ -38,10 +38,13 @@ public class MemberDetails implements OAuth2User {
 
         memberDetails.name = member.getUsername();
         memberDetails.email = member.getEmail();
-
+        memberDetails.role = member.getRole();
 
         return memberDetails;
     }
+
+    // member 엔티티로부터 만들어지는 dto 객체......
+
     @Builder
     public MemberDetails(String name, String email, Map<String, Object> attributes) {
         this.name = name;

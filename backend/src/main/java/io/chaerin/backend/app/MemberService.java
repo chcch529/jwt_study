@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -47,4 +48,19 @@ public class MemberService extends DefaultOAuth2UserService {
 
     }
 
+    public Optional<Member> findById(Long id) {
+        return memberRepository.findById(id);
+    }
+
+    public Member getById(Long id) {
+        return memberRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
+    }
+
+    public MemberDetails getMemberDetailsById(Long id) {
+
+        MemberDetails memberDetails = MemberDetails.from(getById(id));
+
+        return memberDetails;
+
+    }
 }
